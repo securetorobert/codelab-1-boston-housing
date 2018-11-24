@@ -103,10 +103,10 @@
 <p>We start training a model by making a random guess about our <strong>weights</strong>, and then proceed to refine those weights until we have a usable model. To evaluate the usability of our model, we make use of a <strong>holdout</strong> set, also called a <strong>validation</strong> set. This validation set is taken out of our training dataset, which we have stored in df.</p>
 <p>There are various strategies for splitting our data into training and validation sets. Instead of going into detail about that, we will make use of a library. This library requires us to provide our features and our labels separately, so we will create those in the next step.</p>
 <p><strong>X = df.drop([&#39;ID&#39;, &#39;medv&#39;], axis=1)</strong></p>
-<p><strong>y = df[&#39;medv&#39;]</strong></p>
+<p><strong>y = df[[&#39;medv&#39;]]</strong></p>
 <p>We will then proceed to create our training and validation sets.</p>
 <p><strong>from sklearn.model_selection import train_test_split</strong></p>
-<p><strong>X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0, test_size=0.3)</strong></p>
+<p><strong>X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, random_state=0, test_size=0.3)</strong></p>
 <p>The function <strong>train_test_split</strong> takes in our features and labels, as well as a random_state and a test_size. Random state is a number that helps us get the same results when we repeat our experiment. On its own, it doesn&#39;t mean anything. The test size states what percent of our data should he set aside for validation. It is common practice to use 30% of our data if it is not extremely large. Otherwise, we could use as little as 10%.</p>
 
 
