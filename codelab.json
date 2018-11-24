@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "source": "1KbLDnjM4Jo9_li6KPPcxFBlhnl7lDkC8luhC9CFlRxY",
+  "format": "html",
+  "prefix": "../../",
+  "mainga": "UA-49880327-14",
+  "updated": "2018-11-24T06:47:13Z",
+  "id": "",
+  "duration": 0,
+  "title": "Codelab 1: Predict Housing Prices with ML",
+  "author": "Robert John",
+  "summary": "In this codelab, you will learn to create TensorFlow models using the Keras API. You will make use of the popular Boston housing data to learn how to create both shallow and deep networks",
+  "theme": "machine-learning",
+  "status": [
+    "final"
+  ],
+  "category": [
+    "Machine Learning",
+    "TensorFlow",
+    "Keras"
+  ],
+  "tags": [
+    "devfest18"
+  ],
+  "url": ""
+}

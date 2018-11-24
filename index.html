@@ -1,0 +1,243 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Codelab 1: Predict Housing Prices with ML</title>
+  <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../elements/codelab.html">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <style is="custom-style">
+    body {
+      font-family: "Roboto",sans-serif;
+      background: var(--google-codelab-background, #F8F9FA);
+    }
+  </style>
+  
+</head>
+<body unresolved class="fullbleed">
+
+  <google-codelab title="Codelab 1: Predict Housing Prices with ML"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <p><a href="https://www.tensorflow.org/" target="_blank">TensorFlow</a> is a numerical computation library that is used for training Machine Learning models. There are two supported high level APIs for working in TensorFlow, Estimators and Keras. We will make use of the Keras API in this codelab.</p>
+<h2><strong>What is Machine Learning?</strong></h2>
+<p>In traditional rule-based programming, we give our code inputs and rules, and our program produces outputs.</p>
+<p>However, in Machine Learning, we give our program examples of the inputs and the outputs, and the program finds the rules. This process is called learning, and depends on the data or examples that we give to our program.</p>
+<p>This codelab will walk you through creating and training a Machine Learning model using the Keras API. The data we will be making use of will be the Boston housing data hosted <a href="https://www.kaggle.com/c/boston-housing" target="_blank">here</a>.</p>
+<h2><strong>What you will build</strong></h2>
+<p>You will train a model to predict the selling price of houses given certain information.</p>
+<h2 class="checklist"><strong>What you&#39;ll learn</strong></h2>
+<ul class="checklist">
+<li>Getting started with an environment using notebooks</li>
+<li>Reading data into your environment</li>
+<li>Building a model</li>
+<li>Training your model</li>
+<li>Making predictions using your model</li>
+</ul>
+<h2><strong>What you&#39;ll need</strong></h2>
+<ul>
+<li>A recent version of <a href="https://www.google.com/chrome/" target="_blank">Chrome</a>. Note, this works in other browsers as well, but we&#39;ll be using a few features of the Chrome DevTools to better understand what&#39;s happening at the browser level.</li>
+<li>Google <a href="https://colab.research.google.com/" target="_blank">colab</a>, an online notebook frequently used by data scientists</li>
+</ul>
+<p>This codelab is focused on Machine Learning. Core data science concepts will be glossed over.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Getting set up" duration="0">
+        <h2><strong>Download the files from Kaggle</strong></h2>
+<p>The files we will work with are located <a href="https://www.kaggle.com/c/boston-housing" target="_blank">here</a>. If you don&#39;t have an account, you will need to create one, and also potentially join the competition so you can access the data. The page you are on will display the details of the file you are about to download. You should spend some time reading the details on this page.</p>
+<p><img style="max-width: 624.00px" src="img/16855584fe1f6bb4.png"></p>
+<p>When you are done, go to the <strong>Data</strong> tab, and click on the <strong>Download All</strong> button. You will get a zip file. Unzip it, and rename it to boston. You should have three files in it.</p>
+<h2><strong>Upload the files to Google Drive</strong></h2>
+<p>Go to <a href="https://drive.google.com/drive/my-drive" target="_blank">Google Drive</a>, and click on the <strong>New</strong> button. Choose the <strong>Upload Folder</strong> option, browse to where your renamed folder resides, and upload it.</p>
+<p><img style="max-width: 624.00px" src="img/f27e7479d52f7a26.png"></p>
+<h2><strong>Access Colab</strong></h2>
+<p>Open Google colab using this <a href="https://colab.research.google.com/notebooks/welcome.ipynb" target="_blank">link</a>. Click on <strong>File</strong> and choose <strong>New Python 3 Notebook</strong>.</p>
+<p><img style="max-width: 624.00px" src="img/624e140746951417.png"></p>
+<p>After a few seconds, you should have an empty notebook.</p>
+<p><img style="max-width: 624.00px" src="img/64a95a3322c5221a.png"></p>
+<p>We will need to access out Drive. Paste the following two lines of code into the notebook.</p>
+<p><strong>from google.colab import drive</strong></p>
+<p><strong>drive.mount(&#39;/content/gdrive&#39;)</strong></p>
+<p>Hit <strong>Control + Enter</strong> to execute the instructions.</p>
+<p><img style="max-width: 624.00px" src="img/20ed7586754da7e3.png"></p>
+<p>You will need to authenticate before you can access your Drive. Follow the instructions by clicking on the URL and generating an authorization code. This will look something like this.</p>
+<p><img style="max-width: 624.00px" src="img/235e494659cb3f78.png"></p>
+<p>Copy and paste the code into the notebook cell, then hit enter to continue.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Prepare your data" duration="0">
+        <h2><strong>Read the training file</strong></h2>
+<p>In the next cell, type in the following two lines of code.</p>
+<p><strong>import pandas as pd</strong></p>
+<p><strong>import numpy as np</strong></p>
+<p>What we are doing is loading up two libraries called Pandas and Numpy. Pandas is used for reading and manipulating files in a data structure called a <strong>DataFrame</strong>. Numpy is a numerical computation library that we use for converting structures into a numerical representation. You will need to execute the cell using Ctrl + Enter.</p>
+<p>We are now ready to read in our file. We do that with the following code.</p>
+<p><strong>df = pd.read_csv(&#39;/content/gdrive/My Drive/boston/train.csv&#39;)</strong></p>
+<p>Put that code into a new cell, and again use Ctrl + Enter to execute it.</p>
+<h2><strong>Confirm the file was read</strong></h2>
+<p>The previous code read our file and stored it into a data structure that we called <strong>df</strong>. We can take a peek at this file using the following code.</p>
+<p><strong>df.head()</strong></p>
+<p>At this point, you should see the first few lines from the file.</p>
+<p><img style="max-width: 624.00px" src="img/1fa0ae422a45ffe4.png"></p>
+<h2><strong>Understanding our data</strong></h2>
+<p>Recall that machine learning is about the data. Our data is stored in a tabular format, in what is called a comma-separated file. There are other file formats for storing data, such as tab-separated and Excel files.</p>
+<p>At the top of our file, we have the various columns showing up, along with the name of each column. We are interested in each column, and especially, the property of each column. We can gain additional information about these columns by using the following code.</p>
+<p><strong>df.info()</strong></p>
+<p>This will give us the following output.</p>
+<p><img style="max-width: 624.00px" src="img/13ee1000fec704a0.png"></p>
+<p>Now, we can see the number of examples we have in our file, as well as the type of each example and whether there are any missing values.</p>
+<p>For this codelab, we are interested in predicting the value in the column called <strong>medv</strong>. This is called our <strong>label </strong>or<strong> target</strong>.</p>
+<p>The column called ID is there to help us identify each example, and is not used by our Machine Learning model.</p>
+<p>All of the other columns will be used to help predict the label, and are called <strong>features</strong>.</p>
+<h2><strong>Split the data </strong></h2>
+<p>We start training a model by making a random guess about our <strong>weights</strong>, and then proceed to refine those weights until we have a usable model. To evaluate the usability of our model, we make use of a <strong>holdout</strong> set, also called a <strong>validation</strong> set. This validation set is taken out of our training dataset, which we have stored in df.</p>
+<p>There are various strategies for splitting our data into training and validation sets. Instead of going into detail about that, we will make use of a library. This library requires us to provide our features and our labels separately, so we will create those in the next step.</p>
+<p><strong>X = df.drop([&#39;ID&#39;, &#39;medv&#39;], axis=1)</strong></p>
+<p><strong>y = df[&#39;medv&#39;]</strong></p>
+<p>We will then proceed to create our training and validation sets.</p>
+<p><strong>from sklearn.model_selection import train_test_split</strong></p>
+<p><strong>X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0, test_size=0.3)</strong></p>
+<p>The function <strong>train_test_split</strong> takes in our features and labels, as well as a random_state and a test_size. Random state is a number that helps us get the same results when we repeat our experiment. On its own, it doesn&#39;t mean anything. The test size states what percent of our data should he set aside for validation. It is common practice to use 30% of our data if it is not extremely large. Otherwise, we could use as little as 10%.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a model" duration="0">
+        <p>We will use the Keras API to build our model. This approach makes it possible to create a model without the math. We will make use of the Sequential model.</p>
+<h2><strong>Import the necessary libraries</strong></h2>
+<p>We are ready to start working with TensorFlow, so let&#39;s import our libraries using the following code.</p>
+<p><strong>Import tensorflow as tf</strong></p>
+<p><strong>from tensorflow import keras</strong></p>
+<p><strong>from keras import Sequential</strong></p>
+<p><strong>from keras.layers import Dense</strong></p>
+<h2><strong>Create a model</strong></h2>
+<p><strong>model = Sequential()</strong></p>
+<p>We have a model! It can&#39;t do anything yet, but we will get to it.</p>
+<h2><strong>Add layers to the model</strong></h2>
+<p>Every model requires one or more hidden layers. Neural networks are made up of different types of layers in different combinations. Examples of layers are:</p>
+<ul>
+<li>Dense: for fully connected layers</li>
+<li>Conv2D: for image processing</li>
+<li>GRU: for sequence networks</li>
+</ul>
+<p>We will add one dense layer to our model using the following code</p>
+<p><strong>model.add(Dense(50, activation=&#39;relu&#39;))</strong></p>
+<p>This does a number of things:</p>
+<ol type="1" start="1">
+<li>It adds an input layer. The size of the input layer is inferred.</li>
+<li>It adds a hidden layer with 50 neurons. The type of this layer is dense, meaning that every neuron in this layer is connected to every neuron in the previous layer.</li>
+<li>It adds an activation function to the neurons in this layer. There are a number of activation functions available, such as:</li>
+</ol>
+<ol type="1" start="1">
+<li>Sigmoid</li>
+<li>Tanh</li>
+<li>Relu</li>
+</ol>
+<h2><strong>Add an output layer</strong></h2>
+<p>The output layer is  mentioned differently because it determines the type of model you will get. You can have two types of models:</p>
+<ol type="1" start="1">
+<li>Regression: in which you predict a single continuous numerica variable</li>
+<li>Classification: in which you predict a class</li>
+</ol>
+<p>The type of activation you add to the output layer will determine whether it is a regression or classification. For regression, you will leave out the activation, or set it to <strong>None</strong>. For a binary classification problem, you will set it to <strong>sigmoid</strong>.</p>
+<p>Additionally, for regression or binary classification, your output layer will have only one neuron. For multi-class classification, you will have the same number of neurons as the number of classes you need to predict for.</p>
+<p>We want to predict a single numerical value, so we will add an output layer with one neuron and no activation.</p>
+<p>model.add(Dense(1))</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Compile the model" duration="0">
+        <p>This is a special step in building a model. Recall that machine learning is about data. What actually happens during training is that certain assumptions are made using random initialization, and the model adjusts these assumptions which we call weights.</p>
+<p>We will implement the following code</p>
+<p><strong>model.compile()</strong></p>
+<h2><strong>Add a loss function</strong></h2>
+<p>The model is an equation with weights that are used to aid in computing one or more numeric values. All of this leads to an output. In our case, that output is the selling price of a house. The process of calculating this price is called a prediction or inference.</p>
+<p>A good model is one that makes a prediction that is as close as possible to the actual value that it is supposed to predict. There are various ways of comparing the predicted value to the actual value. The algorithm for this is called a loss function, and we have a number:</p>
+<ul>
+<li>MAE: mean absolute error</li>
+<li>MSE: mean squared error</li>
+<li>MAPE: mean absolute percentage error</li>
+<li>binary_crossentropy</li>
+<li>Categorical_crossentropy</li>
+</ul>
+<p>We will update our compile function with a loss</p>
+<p><strong>model.compile(loss=&#39;mean_squared_error&#39;)</strong></p>
+<h2><strong>Specify an optimizer</strong></h2>
+<p>The optimizer specifies how the learning happens. Examples of optimizers are:</p>
+<ul>
+<li>Adam</li>
+<li>Adagrad</li>
+<li>RMSProp</li>
+<li>SGDOptimizer</li>
+</ul>
+<p>We will make use of Adam by updating our compile function</p>
+<p><strong>model.compile(loss=&#39;mean_squared_error&#39;, optimizer=&#39;adam&#39;)</strong></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Train the Model" duration="0">
+        <p>We train the model by falling fit() on our model.</p>
+<p><strong>model.fit(X_train, y_train, epochs=50, shuffle=true, verbose=true)</strong></p>
+<p>The first parameter is our dataframe of features, and the second parameter is our series of labels. The epochs is the number of times we would like to loop over our training data. Because we don&#39;t want the model to assume any relationship in the ordering of our data, we specify that shuffle is true. We set verbose to true so we can see what is going on with our data.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Use the Model" duration="0">
+        <p>That is it, you have a model. You can go ahead a make predictions using the following code</p>
+<p>y_pred = model.predict(X_test[:1])</p>
+<p>You can print out y_pred to see what was predicted.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="0">
+        <p>You made it to the end of the codelab, and have your first model. It is clearly not the best model you could have created because we did not optimize it. In the next codelab, we will perform optimization on our model.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-49880327-14', 'auto');
+
+    (function() {
+      var gaCodelab = '';
+      if (gaCodelab) {
+        ga('create', gaCodelab, 'auto', {name: 'codelab'});
+      }
+
+      var gaView;
+      var parts = location.search.substring(1).split('&');
+      for (var i = 0; i < parts.length; i++) {
+        var param = parts[i].split('=');
+        if (param[0] === 'viewga') {
+          gaView = param[1];
+          break;
+        }
+      }
+      if (gaView && gaView !== gaCodelab) {
+        ga('create', gaView, 'auto', {name: 'view'});
+      }
+    })();
+  </script>
+
+</body>
+</html>
