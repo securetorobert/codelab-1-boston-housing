@@ -2,7 +2,7 @@
   "environment": "web",
   "source": "1KbLDnjM4Jo9_li6KPPcxFBlhnl7lDkC8luhC9CFlRxY",
   "format": "html",
-  "prefix": "../../",
+  "prefix": "./",
   "mainga": "UA-49880327-14",
   "updated": "2018-11-24T06:47:13Z",
   "id": "",
